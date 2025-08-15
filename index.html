@@ -3,178 +3,94 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Hub de Links</title>
+  <title>Links Tributário</title>
   <style>
-    :root{
-      --bg:#0b0f19;
-      --card:#121829;
-      --muted:#9aa4b2;
-      --text:#e8eef8;
-      --accent:#4f80ff;
-      --accent-2:#67e8f9;
-      --ok:#22c55e;
-      --radius:16px;
-    }
-    html,body{height:100%}
-    body{
-      margin:0; background: radial-gradient(1200px 600px at 10% 10%, #182036 0%, #0b0f19 60%);
-      color:var(--text); font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, Apple Color Emoji, Segoe UI Emoji;
-      display:flex; align-items:center; justify-content:center; padding:24px;
-    }
-    .wrap{width:min(920px, 100%);}
-    .card{
-      background:linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
-      border:1px solid rgba(255,255,255,0.08);
-      box-shadow:0 20px 60px rgba(0,0,0,0.45);
-      border-radius:var(--radius); padding:28px 24px;
-      backdrop-filter: blur(6px);
-    }
-    h1{margin:0 0 6px; font-size:22px; letter-spacing:0.2px}
-    p.sub{margin:0 0 14px; color:var(--muted); font-size:14px}
-    .row{display:flex; gap:10px; align-items:center}
-    input[type=search]{
-      flex:1; font-size:16px; padding:14px 16px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);
-      background:#0e1526; color:var(--text); outline:none;
-    }
-    button{
-      cursor:pointer; border:0; border-radius:12px; padding:12px 16px; font-weight:600; color:#0b0f19;
-      background: linear-gradient(90deg, var(--accent), var(--accent-2));
-    }
-    .hint{margin-top:8px; font-size:12px; color:var(--muted)}
-    .results{margin-top:18px; display:grid; gap:10px}
-    .item{
-      display:flex; justify-content:space-between; align-items:center; gap:10px;
-      padding:14px; border-radius:12px; background:#0e1526; border:1px solid rgba(255,255,255,0.06);
-    }
-    .meta{display:flex; flex-direction:column; gap:4px}
-    .title{font-weight:700; font-size:15px}
-    .tags{display:flex; gap:6px; flex-wrap:wrap}
-    .tag{font-size:11px; color:var(--muted); background:#0b1222; border:1px solid rgba(255,255,255,0.06); padding:4px 8px; border-radius:999px}
-    .actions{display:flex; gap:8px}
-    .ghost{
-      background:transparent; color:var(--text); border:1px solid rgba(255,255,255,0.12);
-    }
-    .empty{
-      color:var(--muted); text-align:center; padding:16px 8px; font-size:14px;
-    }
-    footer{margin-top:16px; color:var(--muted); font-size:12px; text-align:center}
-    a{color:inherit; text-decoration:none}
+    body{font-family:sans-serif; background:#0b0f19; color:#e8eef8; display:flex; justify-content:center; padding:20px}
+    .wrap{max-width:600px; width:100%; background:#121829; padding:20px; border-radius:8px}
+    input{width:100%; padding:10px; margin-bottom:10px; border-radius:6px; border:1px solid #333; background:#0e1526; color:white}
+    button{padding:10px 16px; border:none; background:#4f80ff; color:white; border-radius:6px; cursor:pointer}
+    .item{background:#0e1526; padding:10px; margin-top:10px; border-radius:6px; display:flex; justify-content:space-between; align-items:center}
+    .empty{color:#9aa4b2; margin-top:10px}
   </style>
 </head>
 <body>
   <div class="wrap">
-    <div class="card">
-      <h1>Hub de Links</h1>
-      <p class="sub">Digite o que deseja abrir. Ex.: <i>planilha de vendas</i>, <i>relatório financeiro</i>, <i>drive marketing</i>.</p>
-      <div class="row">
-        <input id="q" type="search" placeholder="Buscar... (Enter abre o 1º resultado)" autocomplete="off" />
-        <button id="btnOpen">Abrir 1º</button>
-      </div>
-      <div class="hint">Dica: descreva com 2–4 palavras. O ranking considera título e tags.</div>
-      <div id="results" class="results"></div>
-      <footer>
-        Feito como página 100% estática. Edite <code>links.json</code> para adicionar/alterar links.
-      </footer>
-    </div>
+    <h1>Links Tributário</h1>
+    <p>Digite o que deseja abrir. Ex.: <i>planilha de vendas</i>, <i>difal</i>.</p>
+    <input id="q" type="search" placeholder="Buscar...">
+    <button id="btnOpen">Abrir 1º</button>
+    <div id="results"></div>
   </div>
+
 <script>
-  // ------- util -------
-  function norm(s){ return (s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,'').toLowerCase(); }
-
-  function score(item, query){
-    const nq = norm(query);
-    const title = norm(item.title);
-    const tags = (item.tags||[]).map(norm).join(" ");
-    let s = 0;
-
-    // Pontuação simples
-    if(title.includes(nq)) s += 10;
-    if(tags.includes(nq)) s += 6;
-
-    // Pontua por termos individuais (melhora busca parcial)
-    const terms = nq.split(/\s+/).filter(Boolean);
-    for(const t of terms){
-      if(title.includes(t)) s += 3;
-      if(tags.includes(t)) s += 2;
-    }
-    return s;
+function norm(s){return (s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,'').toLowerCase();}
+function score(item, query){
+  const nq = norm(query);
+  const title = norm(item.title);
+  const tags = (item.tags||[]).map(norm).join(" ");
+  let s = 0;
+  if(title.includes(nq)) s += 10;
+  if(tags.includes(nq)) s += 6;
+  const terms = nq.split(/\s+/).filter(Boolean);
+  for(const t of terms){
+    if(title.includes(t)) s += 3;
+    if(tags.includes(t)) s += 2;
   }
-
-  async function loadData(){
+  return s;
+}
+async function loadData(){
+  try {
     const res = await fetch("links.json", {cache:"no-store"});
-    return res.json();
+    const data = await res.json();
+    console.log("links.json carregado:", data);
+    return data;
+  } catch(e){
+    console.error("Erro ao carregar links.json:", e);
+    return [];
   }
-
-  function render(items){
-    const root = document.getElementById("results");
-    root.innerHTML = "";
-    if(!items.length){
-      root.innerHTML = '<div class="empty">Nenhum resultado. Tente outras palavras.</div>';
-      return;
-    }
-    for(const it of items){
-      const div = document.createElement("div");
-      div.className = "item";
-      div.innerHTML = \`
-        <div class="meta">
-          <div class="title">\${it.title}</div>
-          <div class="tags">\${(it.tags||[]).map(t=>'<span class="tag">'+t+'</span>').join('')}</div>
-        </div>
-        <div class="actions">
-          <a class="open" href="\${it.url}" target="_blank" rel="noopener">
-            <button>Abrir</button>
-          </a>
-          <button class="ghost copy">Copiar link</button>
-        </div>
-      \`;
-      div.querySelector(".copy").addEventListener("click", async () => {
-        try{
-          await navigator.clipboard.writeText(it.url);
-          const b = div.querySelector(".copy");
-          b.textContent = "Copiado!";
-          b.style.borderColor = "transparent";
-          b.style.background = "linear-gradient(90deg, var(--ok), #86efac)";
-          b.style.color = "#0b0f19";
-          setTimeout(()=>{ b.textContent="Copiar link"; b.removeAttribute("style"); }, 1200);
-        }catch(e){ alert("Não foi possível copiar. " + e.message); }
-      });
-      root.appendChild(div);
-    }
+}
+function render(items){
+  const root = document.getElementById("results");
+  root.innerHTML = "";
+  if(!items.length){
+    root.innerHTML = '<div class="empty">Nenhum resultado encontrado</div>';
+    return;
   }
-
-  async function main(){
-    const data = await loadData();
-    const q = document.getElementById("q");
-    const btn = document.getElementById("btnOpen");
-
-    function update(){
-      const query = q.value.trim();
-      if(!query){ render(data); return; }
-      const ranked = data
-        .map(d => ({...d, _s: score(d, query)}))
-        .filter(d => d._s > 0)
-        .sort((a,b) => b._s - a._s);
-      render(ranked);
-    }
-
-    // enter abre o 1º
-    q.addEventListener("keydown", (ev)=>{
-      if(ev.key === "Enter"){
-        const first = document.querySelector(".item a.open");
-        if(first){ first.click(); }
-      }
-    });
-
-    btn.addEventListener("click", ()=>{
-      const first = document.querySelector(".item a.open");
-      if(first){ first.click(); }
-    });
-
-    q.addEventListener("input", update);
-    render(data); // inicial
-    q.focus();
+  items.forEach(it => {
+    const div = document.createElement("div");
+    div.className = "item";
+    div.innerHTML = `<span>${it.title}</span>
+      <a href="${it.url}" target="_blank"><button>Abrir</button></a>`;
+    root.appendChild(div);
+  });
+}
+async function main(){
+  const data = await loadData();
+  const q = document.getElementById("q");
+  const btn = document.getElementById("btnOpen");
+  function update(){
+    const query = q.value.trim();
+    if(!query){ render(data); return; }
+    const ranked = data
+      .map(d => ({...d, _s: score(d, query)}))
+      .filter(d => d._s > 0)
+      .sort((a,b) => b._s - a._s);
+    render(ranked);
   }
-  main();
+  q.addEventListener("input", update);
+  q.addEventListener("keydown", ev => {
+    if(ev.key === "Enter"){
+      const first = document.querySelector(".item a");
+      if(first) first.click();
+    }
+  });
+  btn.addEventListener("click", ()=>{
+    const first = document.querySelector(".item a");
+    if(first) first.click();
+  });
+  render(data);
+}
+main();
 </script>
 </body>
 </html>
