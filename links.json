@@ -1,0 +1,39 @@
+[
+  {
+    "title": "Planilha Difal",
+    "url": "https://docs.google.com/spreadsheets/d/1o6LxsK8mvHNwfwjOZxk3a_JrRqPh0X952pVUhA6gAWs/edit?gid=0#gid=0",
+    "tags": [
+      "difal",
+      "planilha"
+    ]
+  },
+  {
+    "title": "Relatório Financeiro - Mensal",
+    "url": "https://docs.google.com/spreadsheets/d/EXEMPLO_ID_FINANCEIRO/edit",
+    "tags": [
+      "financeiro",
+      "relatorio",
+      "mensal",
+      "caixa"
+    ]
+  },
+  {
+    "title": "Pastas de Marketing (Drive)",
+    "url": "https://drive.google.com/drive/folders/EXEMPLO_ID_MARKETING",
+    "tags": [
+      "marketing",
+      "midia",
+      "drive",
+      "campanhas"
+    ]
+  },
+  {
+    "title": "Cadastro de Fornecedores",
+    "url": "https://docs.google.com/spreadsheets/d/EXEMPLO_ID_FORNECEDORES/edit",
+    "tags": [
+      "compras",
+      "fornecedores",
+      "cadastro"
+    ]
+  }
+]
